@@ -1,0 +1,3 @@
+[submodule "deps/celt"]
+	path = deps/celt
+	url = http://git.xiph.org/celt.git

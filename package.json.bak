@@ -1,0 +1,29 @@
+{
+    'name': 'node-celt',
+    'version': '0.7.0',
+
+    'author': 'Mikko Rantanen <jubjub@jubjubnest.net>',
+
+    'homepage': 'https://github.com/Rantanen/node-celt',
+    'bugs': 'https://github.com/Rantanen/node-celt/issues',
+
+    'license' : 'BSD',
+
+    'repository': {
+        'type': 'git',
+        'url': 'http://github.com/Rantanen/node-celt.git'
+    },
+
+    
+    '//': 'The platform restrictions are mainly due to libcelt config files.',
+
+    '//': 'New platforms can be added by running the ./configure on these and',
+    '//': 'copying the config.h into /debs/config/celt-0.7.0/<os>/<arch>',
+
+    '//': 'Configure with flags: --enable-static --disable-shared --with-pic',
+
+    'os': [ 'linux' ],
+    'cpu': [ 'x64' ],
+
+    'engines': { 'node' : '>=0.11.0' }
+}
