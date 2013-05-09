@@ -6,7 +6,6 @@
 #include "common.h"
 
 #include <string.h>
-#include <stdio.h>
 
 using namespace node;
 using namespace v8;
@@ -64,10 +63,6 @@ class CeltEncoder : public ObjectWrap {
 			// Read the PCM data.
 			char* pcmData = Buffer::Data(pcmBuffer);
 			celt_int16* pcm = reinterpret_cast<celt_int16*>( pcmData );
-			printf( "%d\n", pcm[0] );
-			for( unsigned int i = 0; i < Buffer::Length( pcmBuffer ) / 2; i++ ) {
-				//printf( "%d\n", pcm[i] );
-			}
 
 			// Unwrap the encoder.
 			CeltEncoder* self = ObjectWrap::Unwrap<CeltEncoder>( args.This() );
