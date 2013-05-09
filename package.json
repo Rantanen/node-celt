@@ -9,7 +9,7 @@
     "type": "git",
     "url": "http://github.com/Rantanen/node-celt.git"
   },
-  "//": "Configure with flags: --enable-static --disable-shared --with-pic",
+  "//": "Platform limitations is due to lack of config.h files. See README.md for more information.",
   "os": [
     "linux"
   ],
