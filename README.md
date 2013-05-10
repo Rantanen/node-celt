@@ -1,6 +1,6 @@
-
-CELT bindings for Node.js
-=========================
+node-celt
+=========
+### NodeJS native bindings to libcelt
 
 This module implements bindings for Celt v0.7.0 for Node.js.
 
