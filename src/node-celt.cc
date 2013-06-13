@@ -155,5 +155,5 @@ void init(Handle<Object> exports) {
 	CeltEncoder::Init( exports );
 }
 
-NODE_MODULE(node_celt, init)
+NODE_MODULE(node_celt, Init)
 
