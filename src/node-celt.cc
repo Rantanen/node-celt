@@ -151,9 +151,9 @@ class CeltEncoder : public ObjectWrap {
 };
 
 
-void init(Handle<Object> exports) {
+void NodeInit(Handle<Object> exports) {
 	CeltEncoder::Init( exports );
 }
 
-NODE_MODULE(node_celt, Init)
+NODE_MODULE(node_celt, NodeInit)
 
