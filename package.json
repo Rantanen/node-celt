@@ -13,7 +13,8 @@
   "//": "Platform limitations is due to lack of config.h files. See README.md for more information.",
   "os": [
     "linux",
-    "darwin"
+    "darwin",
+    "freebsd"
   ],
   "cpu": [
     "x64"
