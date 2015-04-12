@@ -22,6 +22,7 @@ Platform support
 
 Supported platforms:
 - Linux x64
+- Linux arm
 - Darwin x64 (mac osx)
 - FreeBSD x64
 
