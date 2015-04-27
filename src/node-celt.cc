@@ -2,8 +2,10 @@
 #include <v8.h>
 #include <node.h>
 #include <node_buffer.h>
+#include <node_object_wrap.h>
 #include "../deps/celt-0.7.1/libcelt/celt.h"
 #include "common.h"
+#include <nan.h>
 
 #include <string.h>
 
@@ -54,8 +56,8 @@ class CeltEncoder : public ObjectWrap {
 			frameBuffer = 0;
 		}
 
-		static Handle<Value> Encode( const Arguments& args ) {
-			HandleScope scope;
+		static NAN_METHOD(Encode) {
+			NanScope();
 
 			REQ_OBJ_ARG( 0, pcmBuffer );
 			OPT_INT_ARG( 1, compressedSize, 43 );
@@ -72,20 +74,14 @@ class CeltEncoder : public ObjectWrap {
 			int compressedLength = celt_encode( self->encoder, pcm, NULL, &(self->compressedBuffer[0]), compressedSize );
 
 			// Create a new result buffer.
-			Buffer* slowBuffer = Buffer::New( compressedLength );
-			memcpy(Buffer::Data(slowBuffer), self->compressedBuffer, compressedLength);
+			Local<Object> actualBuffer = NanNewBufferHandle(reinterpret_cast<char*>(self->compressedBuffer), compressedLength );
 
-			// Wrap the native Buffer into a Node JS buffer.
-			Local<Object> globalObj = Context::GetCurrent()->Global();
-			Local<Function> ctor = Local<Function>::Cast(globalObj->Get(String::New("Buffer")));
-			Handle<Value> ctorArgs[3] = { slowBuffer->handle_, Integer::New(compressedLength), Integer::New(0) };
-			Local<Object> actualBuffer = ctor->NewInstance( 3, ctorArgs );
 
-			return scope.Close( actualBuffer );
+			NanReturnValue( actualBuffer );
 		}
 
-		static Handle<Value> Decode( const Arguments& args ) {
-			HandleScope scope;
+		static NAN_METHOD(Decode) {
+			NanScope();
 
 			REQ_OBJ_ARG( 0, compressedBuffer );
 
@@ -105,24 +101,18 @@ class CeltEncoder : public ObjectWrap {
 
 			// Create a new result buffer.
 			int dataSize = self->frameSize * 2;
-			Buffer* slowBuffer = Buffer::New( dataSize );
-			memcpy( Buffer::Data(slowBuffer), reinterpret_cast<char*>(self->frameBuffer), dataSize );
+			Local<Object> actualBuffer = NanNewBufferHandle(reinterpret_cast<char*>(self->frameBuffer), dataSize);
 
-			// Wrap the native Buffer into a Node JS buffer.
-			Local<Object> globalObj = Context::GetCurrent()->Global();
-			Local<Function> ctor = Local<Function>::Cast(globalObj->Get(String::New("Buffer")));
-			Handle<Value> ctorArgs[3] = { slowBuffer->handle_, Integer::New( dataSize ), Integer::New(0) };
-			Local<Object> actualBuffer = ctor->NewInstance( 3, ctorArgs );
 
-			return scope.Close( actualBuffer );
+			NanReturnValue( actualBuffer );
 		}
 
-		static Handle<Value> New(const Arguments& args) {
-			HandleScope scope;
+		static NAN_METHOD(New) {
+			NanScope();
 
 			if( !args.IsConstructCall()) {
-				return ThrowException(Exception::TypeError(
-							String::New("Use the new operator to construct the CeltEncoder.")));
+				NanThrowTypeError("Use the new operator to construct the CeltEncoder.");
+				NanReturnUndefined();
 			}
 
 			OPT_INT_ARG(0, rate, 42000);
@@ -131,22 +121,23 @@ class CeltEncoder : public ObjectWrap {
 			CeltEncoder* encoder = new CeltEncoder( rate, size );
 
 			encoder->Wrap( args.This() );
-			return args.This();
+			NanReturnValue(args.This());
 		}
 
 		static void Init(Handle<Object> exports) {
-			Local<FunctionTemplate> tpl = FunctionTemplate::New(New);
-			tpl->SetClassName(String::NewSymbol("CeltEncoder"));
+			Local<FunctionTemplate> tpl = NanNew<FunctionTemplate>(New);
+			tpl->SetClassName(NanNew<String>("CeltEncoder"));
 			tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
-			tpl->PrototypeTemplate()->Set( String::NewSymbol("encode"),
-					FunctionTemplate::New( Encode )->GetFunction() );
+			tpl->PrototypeTemplate()->Set( NanNew<String>("encode"),
+				NanNew<FunctionTemplate>( Encode )->GetFunction() );
 
-			tpl->PrototypeTemplate()->Set( String::NewSymbol("decode"),
-					FunctionTemplate::New( Decode )->GetFunction() );
+			tpl->PrototypeTemplate()->Set( NanNew<String>("decode"),
+				NanNew<FunctionTemplate>( Decode )->GetFunction() );
 
-			Persistent<Function> constructor = Persistent<Function>::New(tpl->GetFunction());
-			exports->Set(String::NewSymbol("CeltEncoder"), constructor);
+			//v8::Persistent<v8::FunctionTemplate> constructor;
+			//NanAssignPersistent(constructor, tpl);
+			exports->Set(NanNew<String>("CeltEncoder"), tpl->GetFunction());
 		}
 };
 
@@ -156,4 +147,3 @@ void NodeInit(Handle<Object> exports) {
 }
 
 NODE_MODULE(node_celt, NodeInit)
-
