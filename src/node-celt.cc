@@ -57,7 +57,7 @@ class CeltEncoder : public ObjectWrap {
 		}
 
 		static NAN_METHOD(Encode) {
-			NanEscapableScope();
+			NanScope();
 
 			REQ_OBJ_ARG( 0, pcmBuffer );
 			OPT_INT_ARG( 1, compressedSize, 43 );
@@ -77,11 +77,11 @@ class CeltEncoder : public ObjectWrap {
 			Local<Object> actualBuffer = NanNewBufferHandle(reinterpret_cast<char*>(self->compressedBuffer), compressedLength );
 
 
-			NanEscapeScope( actualBuffer );
+			NanReturnValue( actualBuffer );
 		}
 
 		static NAN_METHOD(Decode) {
-			NanEscapableScope();
+			NanScope();
 
 			REQ_OBJ_ARG( 0, compressedBuffer );
 
@@ -104,7 +104,7 @@ class CeltEncoder : public ObjectWrap {
 			Local<Object> actualBuffer = NanNewBufferHandle(reinterpret_cast<char*>(self->frameBuffer), dataSize);
 
 
-			NanEscapeScope( actualBuffer );
+			NanReturnValue( actualBuffer );
 		}
 
 		static NAN_METHOD(New) {
