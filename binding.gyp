@@ -40,7 +40,8 @@
             'include_dirs': [
                 '/home/wace/dev/nvm/src/node-v0.10.5/src',
                 '/home/wace/dev/nvm/src/node-v0.10.5/deps/v8/include',
-                '/home/wace/dev/nvm/src/node-v0.10.5/deps/uv/include'
+                '/home/wace/dev/nvm/src/node-v0.10.5/deps/uv/include',
+		"<!(node -e \"require('nan')\")"
             ],
             'sources': [
                 'src/node-celt.cc',

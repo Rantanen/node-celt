@@ -23,8 +23,8 @@
 #endif
 
 #define THROW_TYPE_ERROR( MSG ) \
-	return ThrowException(Exception::TypeError( \
-		String::New( MSG )));
+	NanThrowTypeError( MSG ); \
+	NanReturnUndefined();
 
 #define CHECK_ARG(I, CHECK, DO_TRUE, DO_FALSE) \
 	if ( args.Length() <= (I) || !args[I]->CHECK ) { DO_FALSE; } else { DO_TRUE; }
@@ -42,8 +42,8 @@
 
 #define REQ_FUN_ARG(I, VAR)                                      \
   if (args.Length() <= (I) || !args[I]->IsFunction())            \
-		return ThrowException(Exception::TypeError(              \
-		  String::New("Argument " #I " must be a function")));   \
+		NanThrowTypeError("Argument " #I " must be a function");   \
+		NanReturnUndefined(); \
   Local<Function> VAR = Local<Function>::Cast(args[I]);
 
 #endif
