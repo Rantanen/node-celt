@@ -36,6 +36,10 @@
 	REQUIRE_ARG( I, IsObject() ) \
 	Local<Object> VAR = Local<Object>::Cast( args[I] )
 
+#define REQ_INT_ARG(I, VAR) \
+	REQUIRE_ARG( I, IsNumber() ) \
+	int VAR = args[I]->Int32Value()
+
 #define OPT_INT_ARG(I, VAR, DEFAULT) \
 	int VAR; \
 	CHECK_ARG( I, IsNumber(), VAR = args[I]->Int32Value(), VAR = DEFAULT )

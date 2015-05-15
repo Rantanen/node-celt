@@ -124,6 +124,19 @@ class CeltEncoder : public ObjectWrap {
 			NanReturnValue(args.This());
 		}
 
+		static NAN_METHOD(SetBitrate) {
+			NanScope();
+
+			REQ_INT_ARG( 0, bitrate );
+
+			CeltEncoder* self = ObjectWrap::Unwrap<CeltEncoder>( args.This() );
+			self->EnsureEncoder();
+
+			celt_encoder_ctl( self->encoder, CELT_SET_VBR_RATE( bitrate ) );
+
+			NanReturnUndefined();
+		}
+
 		static void Init(Handle<Object> exports) {
 			Local<FunctionTemplate> tpl = NanNew<FunctionTemplate>(New);
 			tpl->SetClassName(NanNew<String>("CeltEncoder"));
@@ -134,6 +147,9 @@ class CeltEncoder : public ObjectWrap {
 
 			tpl->PrototypeTemplate()->Set( NanNew<String>("decode"),
 				NanNew<FunctionTemplate>( Decode )->GetFunction() );
+
+			tpl->PrototypeTemplate()->Set( NanNew<String>("setBitrate"),
+				NanNew<FunctionTemplate>( SetBitrate )->GetFunction() );
 
 			//v8::Persistent<v8::FunctionTemplate> constructor;
 			//NanAssignPersistent(constructor, tpl);
