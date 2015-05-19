@@ -25,6 +25,7 @@ Supported platforms:
 - Linux arm
 - Darwin x64 (mac osx)
 - FreeBSD x64
+- Windows x64
 
 Add new supported platforms by running ./configure in deps/celt-0.7.1 and
 copying the resulting config.h to deps/config/celt-0.7.1/<os>/<arch>.
