@@ -469,9 +469,9 @@ void quant_bands(const CELTMode *m, celt_norm * restrict X, const celt_ener *ban
       BPbits = m->bits;
 
       if (encode)
-         tell = ec_enc_tell(enc_dec, BITRES);
+         tell = ec_enc_tell((ec_enc *) enc_dec, BITRES);
       else
-         tell = ec_dec_tell(enc_dec, BITRES);
+         tell = ec_dec_tell((ec_dec *) enc_dec, BITRES);
       if (i != 0)
          balance -= tell;
       remaining_bits = (total_bits<<BITRES)-tell-1;
@@ -497,9 +497,9 @@ void quant_bands(const CELTMode *m, celt_norm * restrict X, const celt_ener *ban
       {
          int spread = fold ? B : 0;
          if (encode)
-            alg_quant(X+eBands[i], eBands[i+1]-eBands[i], q, spread, enc_dec);
+            alg_quant(X+eBands[i], eBands[i+1]-eBands[i], q, spread, (ec_enc *) enc_dec);
          else
-            alg_unquant(X+eBands[i], eBands[i+1]-eBands[i], q, spread, enc_dec);
+            alg_unquant(X+eBands[i], eBands[i+1]-eBands[i], q, spread, (ec_dec *) enc_dec);
       } else {
          intra_fold(m, eBands[i+1]-eBands[i], norm, X+eBands[i], eBands[i], B);
       }

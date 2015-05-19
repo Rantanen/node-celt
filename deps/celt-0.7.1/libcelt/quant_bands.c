@@ -67,7 +67,7 @@ int *quant_prob_alloc(const CELTMode *m)
 {
    int i;
    int *prob;
-   prob = celt_alloc(4*m->nbEBands*sizeof(int));
+   prob = (int *) celt_alloc(4*m->nbEBands*sizeof(int));
    if (prob==NULL)
      return NULL;
    for (i=0;i<m->nbEBands;i++)

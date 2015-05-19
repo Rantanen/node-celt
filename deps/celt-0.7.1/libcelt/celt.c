@@ -161,7 +161,7 @@ CELTEncoder *celt_encoder_create(const CELTMode *mode, int channels, int *error)
 
    N = mode->mdctSize;
    C = channels;
-   st = celt_alloc(sizeof(CELTEncoder));
+   st = (CELTEncoder *) celt_alloc(sizeof(CELTEncoder));
    
    if (st==NULL)
    {
@@ -185,9 +185,9 @@ CELTEncoder *celt_encoder_create(const CELTMode *mode, int channels, int *error)
    st->tonal_average = QCONST16(1.,8);
    st->fold_decision = 1;
 
-   st->in_mem = celt_alloc(st->overlap*C*sizeof(celt_sig));
-   st->out_mem = celt_alloc((MAX_PERIOD+st->overlap)*C*sizeof(celt_sig));
-   st->pitch_buf = celt_alloc(((MAX_PERIOD>>1)+2)*sizeof(celt_word16));
+   st->in_mem = (celt_sig *) celt_alloc(st->overlap*C*sizeof(celt_sig));
+   st->out_mem = (celt_sig *) celt_alloc((MAX_PERIOD+st->overlap)*C*sizeof(celt_sig));
+   st->pitch_buf = (celt_word16 *) celt_alloc(((MAX_PERIOD>>1)+2)*sizeof(celt_word16));
 
    st->oldBandE = (celt_word16*)celt_alloc(C*mode->nbEBands*sizeof(celt_word16));
 
@@ -1149,7 +1149,7 @@ CELTDecoder *celt_decoder_create(const CELTMode *mode, int channels, int *error)
 
    N = mode->mdctSize;
    C = CHANNELS(channels);
-   st = celt_alloc(sizeof(CELTDecoder));
+   st = (CELTDecoder *) celt_alloc(sizeof(CELTDecoder));
 
    if (st==NULL)
    {
@@ -1165,7 +1165,7 @@ CELTDecoder *celt_decoder_create(const CELTMode *mode, int channels, int *error)
    st->overlap = mode->overlap;
    st->channels = channels;
 
-   st->decode_mem = celt_alloc((DECODE_BUFFER_SIZE+st->overlap)*C*sizeof(celt_sig));
+   st->decode_mem = (celt_sig *) celt_alloc((DECODE_BUFFER_SIZE+st->overlap)*C*sizeof(celt_sig));
    st->out_mem = st->decode_mem+DECODE_BUFFER_SIZE-MAX_PERIOD;
    
    st->oldBandE = (celt_word16*)celt_alloc(C*mode->nbEBands*sizeof(celt_word16));

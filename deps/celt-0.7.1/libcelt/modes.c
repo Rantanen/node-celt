@@ -141,7 +141,7 @@ static celt_int16 *compute_ebands(celt_int32 Fs, int frame_size, int nbShortMdct
    low = ((bark_freq[lin]/res)+(min_bins-1))/min_bins;
    high = nBark-lin;
    *nbEBands = low+high;
-   eBands = celt_alloc(sizeof(celt_int16)*(*nbEBands+2));
+   eBands = (celt_int16 *) celt_alloc(sizeof(celt_int16)*(*nbEBands+2));
    
    if (eBands==NULL)
       return NULL;
@@ -190,7 +190,7 @@ static void compute_allocation_table(CELTMode *mode, int res)
        break;
 
    mode->nbAllocVectors = BITALLOC_SIZE;
-   allocVectors = celt_alloc(sizeof(celt_int16)*(BITALLOC_SIZE*mode->nbEBands));
+   allocVectors = (celt_int16 *) celt_alloc(sizeof(celt_int16)*(BITALLOC_SIZE*mode->nbEBands));
    if (allocVectors==NULL)
       return;
    /* Compute per-codec-band allocation from per-critical-band matrix */
@@ -300,7 +300,7 @@ CELTMode *celt_mode_create(celt_int32 Fs, int frame_size, int *error)
    }
    res = (Fs+frame_size)/(2*frame_size);
    
-   mode = celt_alloc(sizeof(CELTMode));
+   mode = (CELTMode *) celt_alloc(sizeof(CELTMode));
    if (mode==NULL)
       goto failure;
    mode->marker_start = MODEPARTIAL;

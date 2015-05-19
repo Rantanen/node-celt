@@ -53,7 +53,7 @@ celt_int16 **compute_alloc_cache(CELTMode *m, int C)
    celt_int16 **bits;
    const celt_int16 *eBands = m->eBands;
 
-   bits = celt_alloc(m->nbEBands*sizeof(celt_int16*));
+   bits = (celt_int16 **) celt_alloc(m->nbEBands*sizeof(celt_int16*));
    if (bits==NULL)
      return NULL;
         
@@ -65,7 +65,7 @@ celt_int16 **compute_alloc_cache(CELTMode *m, int C)
       {
          bits[i] = bits[i-1];
       } else {
-         bits[i] = celt_alloc(MAX_PSEUDO*sizeof(celt_int16));
+         bits[i] = (celt_int16 *) celt_alloc(MAX_PSEUDO*sizeof(celt_int16));
          if (bits[i]!=NULL) {
             int j;
             celt_int16 tmp[MAX_PULSES];
