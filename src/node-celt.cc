@@ -57,7 +57,6 @@ class CeltEncoder : public ObjectWrap {
 		}
 
 		static NAN_METHOD(Encode) {
-			NanScope();
 
 			REQ_OBJ_ARG( 0, pcmBuffer );
 			OPT_INT_ARG( 1, compressedSize, 43 );
@@ -67,21 +66,20 @@ class CeltEncoder : public ObjectWrap {
 			celt_int16* pcm = reinterpret_cast<celt_int16*>( pcmData );
 
 			// Unwrap the encoder.
-			CeltEncoder* self = ObjectWrap::Unwrap<CeltEncoder>( args.This() );
+			CeltEncoder* self = ObjectWrap::Unwrap<CeltEncoder>( info.This() );
 			self->EnsureEncoder();
 
 			// Encode the samples.
-			int compressedLength = celt_encode( self->encoder, pcm, NULL, &(self->compressedBuffer[0]), compressedSize );
+			size_t compressedLength = (size_t)celt_encode( self->encoder, pcm, NULL, &(self->compressedBuffer[0]), compressedSize );
 
 			// Create a new result buffer.
-			Local<Object> actualBuffer = NanNewBufferHandle(reinterpret_cast<char*>(self->compressedBuffer), compressedLength );
+			auto actualBuffer = Nan::CopyBuffer(reinterpret_cast<char*>(self->compressedBuffer), compressedLength ).ToLocalChecked();
 
 
-			NanReturnValue( actualBuffer );
+			info.GetReturnValue().Set( actualBuffer );
 		}
 
 		static NAN_METHOD(Decode) {
-			NanScope();
 
 			REQ_OBJ_ARG( 0, compressedBuffer );
 
@@ -89,7 +87,7 @@ class CeltEncoder : public ObjectWrap {
 			unsigned char* compressedData = (unsigned char*)Buffer::Data(compressedBuffer);
 			size_t compressedDataLength = Buffer::Length(compressedBuffer);
 
-			CeltEncoder* self = ObjectWrap::Unwrap<CeltEncoder>( args.This() );
+			CeltEncoder* self = ObjectWrap::Unwrap<CeltEncoder>( info.This() );
 			self->EnsureDecoder();
 
 			// Encode the samples.
@@ -101,18 +99,16 @@ class CeltEncoder : public ObjectWrap {
 
 			// Create a new result buffer.
 			int dataSize = self->frameSize * 2;
-			Local<Object> actualBuffer = NanNewBufferHandle(reinterpret_cast<char*>(self->frameBuffer), dataSize);
+			Local<Object> actualBuffer = Nan::CopyBuffer(reinterpret_cast<char*>(self->frameBuffer), dataSize).ToLocalChecked();
 
 
-			NanReturnValue( actualBuffer );
+			info.GetReturnValue().Set( actualBuffer );
 		}
 
 		static NAN_METHOD(New) {
-			NanScope();
 
-			if( !args.IsConstructCall()) {
-				NanThrowTypeError("Use the new operator to construct the CeltEncoder.");
-				NanReturnUndefined();
+			if( !info.IsConstructCall()) {
+				return Nan::ThrowTypeError("Use the new operator to construct the CeltEncoder.");
 			}
 
 			OPT_INT_ARG(0, rate, 42000);
@@ -120,40 +116,37 @@ class CeltEncoder : public ObjectWrap {
 
 			CeltEncoder* encoder = new CeltEncoder( rate, size );
 
-			encoder->Wrap( args.This() );
-			NanReturnValue(args.This());
+			encoder->Wrap( info.This() );
+			info.GetReturnValue().Set(info.This());
 		}
 
 		static NAN_METHOD(SetBitrate) {
-			NanScope();
 
 			REQ_INT_ARG( 0, bitrate );
 
-			CeltEncoder* self = ObjectWrap::Unwrap<CeltEncoder>( args.This() );
+			CeltEncoder* self = ObjectWrap::Unwrap<CeltEncoder>( info.This() );
 			self->EnsureEncoder();
 
 			celt_encoder_ctl( self->encoder, CELT_SET_VBR_RATE( bitrate ) );
-
-			NanReturnUndefined();
 		}
 
 		static void Init(Handle<Object> exports) {
-			Local<FunctionTemplate> tpl = NanNew<FunctionTemplate>(New);
-			tpl->SetClassName(NanNew<String>("CeltEncoder"));
+			Local<FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
+			tpl->SetClassName(Nan::New<String>("CeltEncoder").ToLocalChecked());
 			tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
-			tpl->PrototypeTemplate()->Set( NanNew<String>("encode"),
-				NanNew<FunctionTemplate>( Encode )->GetFunction() );
+			tpl->PrototypeTemplate()->Set( Nan::New<String>("encode").ToLocalChecked(),
+				Nan::New<FunctionTemplate>( Encode )->GetFunction() );
 
-			tpl->PrototypeTemplate()->Set( NanNew<String>("decode"),
-				NanNew<FunctionTemplate>( Decode )->GetFunction() );
+			tpl->PrototypeTemplate()->Set( Nan::New<String>("decode").ToLocalChecked(),
+				Nan::New<FunctionTemplate>( Decode )->GetFunction() );
 
-			tpl->PrototypeTemplate()->Set( NanNew<String>("setBitrate"),
-				NanNew<FunctionTemplate>( SetBitrate )->GetFunction() );
+			tpl->PrototypeTemplate()->Set( Nan::New<String>("setBitrate").ToLocalChecked(),
+				Nan::New<FunctionTemplate>( SetBitrate )->GetFunction() );
 
 			//v8::Persistent<v8::FunctionTemplate> constructor;
 			//NanAssignPersistent(constructor, tpl);
-			exports->Set(NanNew<String>("CeltEncoder"), tpl->GetFunction());
+			exports->Set(Nan::New<String>("CeltEncoder").ToLocalChecked(), tpl->GetFunction());
 		}
 };
 
