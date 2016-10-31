@@ -135,14 +135,9 @@ class CeltEncoder : public ObjectWrap {
 			tpl->SetClassName(Nan::New<String>("CeltEncoder").ToLocalChecked());
 			tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
-			tpl->PrototypeTemplate()->Set( Nan::New<String>("encode").ToLocalChecked(),
-				Nan::New<FunctionTemplate>( Encode )->GetFunction() );
-
-			tpl->PrototypeTemplate()->Set( Nan::New<String>("decode").ToLocalChecked(),
-				Nan::New<FunctionTemplate>( Decode )->GetFunction() );
-
-			tpl->PrototypeTemplate()->Set( Nan::New<String>("setBitrate").ToLocalChecked(),
-				Nan::New<FunctionTemplate>( SetBitrate )->GetFunction() );
+			Nan::SetPrototypeMethod( tpl, "encode", Encode );
+			Nan::SetPrototypeMethod( tpl, "decode", Decode );
+			Nan::SetPrototypeMethod( tpl, "setBitrate", SetBitrate );
 
 			//v8::Persistent<v8::FunctionTemplate> constructor;
 			//NanAssignPersistent(constructor, tpl);
