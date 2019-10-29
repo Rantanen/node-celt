@@ -130,7 +130,7 @@ class CeltEncoder : public ObjectWrap {
 			celt_encoder_ctl( self->encoder, CELT_SET_VBR_RATE( bitrate ) );
 		}
 
-		static void Init(Handle<Object> exports) {
+		static void Init(Local<Object> exports) {
 			Local<FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
 			tpl->SetClassName(Nan::New<String>("CeltEncoder").ToLocalChecked());
 			tpl->InstanceTemplate()->SetInternalFieldCount(1);
@@ -141,12 +141,14 @@ class CeltEncoder : public ObjectWrap {
 
 			//v8::Persistent<v8::FunctionTemplate> constructor;
 			//NanAssignPersistent(constructor, tpl);
-			exports->Set(Nan::New<String>("CeltEncoder").ToLocalChecked(), tpl->GetFunction());
+			Nan::Set( exports,
+					Nan::New<String>("CeltEncoder").ToLocalChecked(),
+					Nan::GetFunction( tpl ).ToLocalChecked() );
 		}
 };
 
 
-void NodeInit(Handle<Object> exports) {
+void NodeInit(Local<Object> exports) {
 	CeltEncoder::Init( exports );
 }
 
